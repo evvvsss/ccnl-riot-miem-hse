@@ -94,7 +94,11 @@ static int _ccnl_content(int argc, char **argv)
         _content_usage(argv[0]);
         return -1;
     }
-
+    printf("Путь");
+    prinf(argv[1]);
+    printf("Сообщение");
+    prinf(argv[2]);
+    
     int arg_len;
     char buf[BUF_SIZE+1]; /* add one extra space to fit trailing '\0' */
 
@@ -350,9 +354,11 @@ SHELL_COMMAND(fib_copy, "CUSTOM COMMAND FIB", _fib_copy);
 
 static int _custom(int argc, char **argv)
 {
+    // функция кладет сообщение в нужный URL
+
     printf("This is printf in  _custom\n");
     puts("this is puts\n");
-    argv[0] = "trying\0";
+    argv[0] = "\0"; // команда
     argv[1] = "/folder1/folder2\0";
     argv[2] = "our message\0";
     int arg_len;

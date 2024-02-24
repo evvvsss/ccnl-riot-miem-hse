@@ -69,7 +69,7 @@
 #endif
 
 #ifndef CCNL_CONTENT_TIMEOUT
-# define CCNL_CONTENT_TIMEOUT            0 // sec
+# define CCNL_CONTENT_TIMEOUT            0 // sec Все проходящие сообщения в кэше не остаются. Но в CS созданном лежат
 //# define CCNL_CONTENT_TIMEOUT            300 // sec
 #endif
 #ifndef CCNL_INTEREST_TIMEOUT

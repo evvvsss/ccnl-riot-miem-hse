@@ -21,7 +21,7 @@
  * Define the log level of the CCN-Lite stack
  */
 #ifndef LOG_LEVEL
-#define LOG_LEVEL LOG_DEBUG
+#define LOG_LEVEL LOG_ALL
 #endif
 #include "log.h"
 
