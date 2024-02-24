@@ -95,10 +95,10 @@ static int _ccnl_content(int argc, char **argv)
         return -1;
     }
     printf("Путь");
-    prinf(argv[1]);
+    printf(argv[1]);
     printf("Сообщение");
-    prinf(argv[2]);
-    
+    printf(argv[2]);
+
     int arg_len;
     char buf[BUF_SIZE+1]; /* add one extra space to fit trailing '\0' */
 
