@@ -12,8 +12,6 @@ doc/doxygen/*.tmp
 # bin (e.g.:build directory) and .bin files
 bin
 *.bin
-# Build directory
-/build
 # AFL findings
 fuzzing/**/findings/
 # Backup files
