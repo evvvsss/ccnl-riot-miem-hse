@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Hello world for MIEM",
+            "type": "gdb",
+            "request": "attach",
+            "valuesFormatting": "parseText",
+            "executable": "${workspaceRoot}/bin/nucleo-l152re/hello-world.elf",
+            "cwd": "${workspaceRoot}",
+            "gdbpath": "gdb-multiarch",
+            "remote": true,
+            "target": ":3333",
+            "autorun":[
+                "monitor reset halt",
+                "flushregs",
+            ],
+            "preLaunchTask": "debug-server",
+            "postDebugTask": "kill-openocd"
+        }
+    ]
+}

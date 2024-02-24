@@ -1,0 +1,268 @@
+From 7411a984a666fb77acf109b4efc96d7e6f1cdb14 Mon Sep 17 00:00:00 2001
+From: Alexander Podshivalov <a_podshivalov@mail.ru>
+Date: Tue, 27 Oct 2020 16:59:28 +0300
+Subject: [PATCH 1/1] Get rid of floats
+
+---
+ cayenne_lpp.c | 71 ++++++++++++++++++++-------------------------------
+ cayenne_lpp.h | 43 ++++++++++++++++----------------
+ 2 files changed, 49 insertions(+), 66 deletions(-)
+
+diff --git a/cayenne_lpp.c b/cayenne_lpp.c
+index 0a85ccd..68b90eb 100644
+--- a/cayenne_lpp.c
++++ b/cayenne_lpp.c
+@@ -45,11 +45,10 @@ void cayenne_lpp_add_digital_output(cayenne_lpp_t *lpp, uint8_t channel,
+ }
+ 
+ void cayenne_lpp_add_analog_input(cayenne_lpp_t *lpp, uint8_t channel,
+-                                  float value)
++                                  int16_t val)
+ {
+     assert((lpp->cursor + CAYENNE_LPP_ANALOG_INPUT_SIZE) < CAYENNE_LPP_MAX_BUFFER_SIZE);
+ 
+-    int16_t val = value * 100;
+     lpp->buffer[lpp->cursor++] = channel;
+     lpp->buffer[lpp->cursor++] = CAYENNE_LPP_ANALOG_INPUT;
+     lpp->buffer[lpp->cursor++] = val >> 8;
+@@ -57,11 +56,10 @@ void cayenne_lpp_add_analog_input(cayenne_lpp_t *lpp, uint8_t channel,
+ }
+ 
+ void cayenne_lpp_add_analog_output(cayenne_lpp_t *lpp, uint8_t channel,
+-                                   float value)
++                                   int16_t val)
+ {
+     assert((lpp->cursor + CAYENNE_LPP_ANALOG_OUTPUT_SIZE) < CAYENNE_LPP_MAX_BUFFER_SIZE);
+ 
+-    int16_t val = value * 100;
+     lpp->buffer[lpp->cursor++] = channel;
+     lpp->buffer[lpp->cursor++] = CAYENNE_LPP_ANALOG_OUTPUT;
+     lpp->buffer[lpp->cursor++] = val >> 8;
+@@ -90,87 +88,72 @@ void cayenne_lpp_add_presence(cayenne_lpp_t *lpp, uint8_t channel,
+ }
+ 
+ void cayenne_lpp_add_temperature(cayenne_lpp_t *lpp, uint8_t channel,
+-                                 float celsius)
++                                 int16_t celsius)
+ {
+     assert((lpp->cursor + CAYENNE_LPP_TEMPERATURE_SIZE) < CAYENNE_LPP_MAX_BUFFER_SIZE);
+ 
+-    int16_t val = celsius * 10;
+     lpp->buffer[lpp->cursor++] = channel;
+     lpp->buffer[lpp->cursor++] = CAYENNE_LPP_TEMPERATURE;
+-    lpp->buffer[lpp->cursor++] = val >> 8;
+-    lpp->buffer[lpp->cursor++] = val;
++    lpp->buffer[lpp->cursor++] = celsius >> 8;
++    lpp->buffer[lpp->cursor++] = celsius;
+ }
+ 
+ void cayenne_lpp_add_relative_humidity(cayenne_lpp_t *lpp, uint8_t channel,
+-                                       float rh)
++                                       uint8_t rh)
+ {
+     assert((lpp->cursor + CAYENNE_LPP_RELATIVE_HUMIDITY_SIZE) < CAYENNE_LPP_MAX_BUFFER_SIZE);
+ 
+-    uint8_t val = rh * 2;
+     lpp->buffer[lpp->cursor++] = channel;
+     lpp->buffer[lpp->cursor++] = CAYENNE_LPP_RELATIVE_HUMIDITY;
+-    lpp->buffer[lpp->cursor++] = val;
++    lpp->buffer[lpp->cursor++] = rh;
+ }
+ 
+ void cayenne_lpp_add_accelerometer(cayenne_lpp_t *lpp, uint8_t channel,
+-                                   float x, float y, float z)
++                                   int16_t x, int16_t y, int16_t z)
+ {
+     assert((lpp->cursor + CAYENNE_LPP_ACCELEROMETER_SIZE) < CAYENNE_LPP_MAX_BUFFER_SIZE);
+ 
+-    int16_t vx = x * 1000;
+-    int16_t vy = y * 1000;
+-    int16_t vz = z * 1000;
+-
+     lpp->buffer[lpp->cursor++] = channel;
+     lpp->buffer[lpp->cursor++] = CAYENNE_LPP_ACCELEROMETER;
+-    lpp->buffer[lpp->cursor++] = vx >> 8;
+-    lpp->buffer[lpp->cursor++] = vx;
+-    lpp->buffer[lpp->cursor++] = vy >> 8;
+-    lpp->buffer[lpp->cursor++] = vy;
+-    lpp->buffer[lpp->cursor++] = vz >> 8;
+-    lpp->buffer[lpp->cursor++] = vz;
++    lpp->buffer[lpp->cursor++] = x >> 8;
++    lpp->buffer[lpp->cursor++] = x;
++    lpp->buffer[lpp->cursor++] = y >> 8;
++    lpp->buffer[lpp->cursor++] = y;
++    lpp->buffer[lpp->cursor++] = z >> 8;
++    lpp->buffer[lpp->cursor++] = z;
+ }
+ 
+ void cayenne_lpp_add_barometric_pressure(cayenne_lpp_t *lpp, uint8_t channel,
+-                                         float hpa)
++                                         int16_t hpa)
+ {
+     assert((lpp->cursor + CAYENNE_LPP_BAROMETRIC_PRESSURE_SIZE) < CAYENNE_LPP_MAX_BUFFER_SIZE);
+ 
+-    int16_t val = hpa * 10;
+     lpp->buffer[lpp->cursor++] = channel;
+     lpp->buffer[lpp->cursor++] = CAYENNE_LPP_TEMPERATURE;
+-    lpp->buffer[lpp->cursor++] = val >> 8;
+-    lpp->buffer[lpp->cursor++] = val;
++    lpp->buffer[lpp->cursor++] = hpa >> 8;
++    lpp->buffer[lpp->cursor++] = hpa;
+ }
+ 
+-void cayenne_lpp_add_gyrometer(cayenne_lpp_t *lpp, uint8_t channel, float x,
+-                               float y, float z)
++void cayenne_lpp_add_gyrometer(cayenne_lpp_t *lpp, uint8_t channel, int16_t x,
++                               int16_t y, int16_t z)
+ {
+     assert((lpp->cursor + CAYENNE_LPP_GYROMETER_SIZE) < CAYENNE_LPP_MAX_BUFFER_SIZE);
+ 
+-    int16_t vx = x * 100;
+-    int16_t vy = y * 100;
+-    int16_t vz = z * 100;
+-
+     lpp->buffer[lpp->cursor++] = channel;
+     lpp->buffer[lpp->cursor++] = CAYENNE_LPP_GYROMETER;
+-    lpp->buffer[lpp->cursor++] = vx >> 8;
+-    lpp->buffer[lpp->cursor++] = vx;
+-    lpp->buffer[lpp->cursor++] = vy >> 8;
+-    lpp->buffer[lpp->cursor++] = vy;
+-    lpp->buffer[lpp->cursor++] = vz >> 8;
+-    lpp->buffer[lpp->cursor++] = vz;
++    lpp->buffer[lpp->cursor++] = x >> 8;
++    lpp->buffer[lpp->cursor++] = x;
++    lpp->buffer[lpp->cursor++] = y >> 8;
++    lpp->buffer[lpp->cursor++] = y;
++    lpp->buffer[lpp->cursor++] = z >> 8;
++    lpp->buffer[lpp->cursor++] = z;
+ }
+ 
+-void cayenne_lpp_add_gps(cayenne_lpp_t *lpp, uint8_t channel, float latitude,
+-                         float longitude, float meters)
++void cayenne_lpp_add_gps(cayenne_lpp_t *lpp, uint8_t channel, int32_t lat,
++                         int32_t lon, int32_t alt)
+ {
+     assert((lpp->cursor + CAYENNE_LPP_GPS_SIZE) < CAYENNE_LPP_MAX_BUFFER_SIZE);
+ 
+-    int32_t lat = latitude * 10000;
+-    int32_t lon = longitude * 10000;
+-    int32_t alt = meters * 100;
+-
+     lpp->buffer[lpp->cursor++] = channel;
+     lpp->buffer[lpp->cursor++] = CAYENNE_LPP_GPS;
+ 
+diff --git a/cayenne_lpp.h b/cayenne_lpp.h
+index 3b4010a..0394a7a 100644
+--- a/cayenne_lpp.h
++++ b/cayenne_lpp.h
+@@ -110,20 +110,20 @@ void cayenne_lpp_add_digital_output(cayenne_lpp_t *lpp, uint8_t channel,
+  *
+  * @param[in] lpp          the cayenne lpp descriptor
+  * @param[in] channel      the data channel
+- * @param[in] value        the analog input value
++ * @param[in] val          the analog input value (with 2 decimal points)
+  */
+ void cayenne_lpp_add_analog_input(cayenne_lpp_t *lpp, uint8_t channel,
+-                                  float value);
++                                  int16_t value);
+ 
+ /**
+  * @brief Add an encoded analog output value to the buffer
+  *
+  * @param[in] lpp          the cayenne lpp descriptor
+  * @param[in] channel      the data channel
+- * @param[in] value        the analog output value
++ * @param[in] val          the analog output value (with 2 decimal points)
+  */
+ void cayenne_lpp_add_analog_output(cayenne_lpp_t *lpp, uint8_t channel,
+-                                   float value);
++                                   int16_t val);
+ 
+ /**
+  * @brief Add an encoded luminosity value to the buffer
+@@ -150,52 +150,52 @@ void cayenne_lpp_add_presence(cayenne_lpp_t *lpp, uint8_t channel,
+  *
+  * @param[in] lpp          the cayenne lpp descriptor
+  * @param[in] channel      the data channel
+- * @param[in] celsius      the temperature in celsius (1 digit precision)
++ * @param[in] celsius      the temperature in 0.1 celsius
+  */
+ void cayenne_lpp_add_temperature(cayenne_lpp_t *lpp, uint8_t channel,
+-                                 float celsius);
++                                 int16_t celsius);
+ 
+ /**
+  * @brief Add an encoded relative humidity value to the buffer
+  *
+  * @param[in] lpp          the cayenne lpp descriptor
+  * @param[in] channel      the data channel
+- * @param[in] rh           the relative humidity value (in %)
++ * @param[in] rh           the relative humidity value (in 1/2%)
+  */
+ void cayenne_lpp_add_relative_humidity(cayenne_lpp_t *lpp, uint8_t channel,
+-                                       float rh);
++                                       uint8_t rh);
+ 
+ /**
+  * @brief Add an encoded accelerometer value to the buffer
+  *
+  * @param[in] lpp          the cayenne lpp descriptor
+  * @param[in] channel      the data channel
+- * @param[in] x            the acceloremeter value in X axis
+- * @param[in] y            the acceloremeter value in Y axis
+- * @param[in] z            the acceloremeter value in Z axis
++ * @param[in] x            the acceloremeter value in X axis, in milliG
++ * @param[in] y            the acceloremeter value in Y axis, in milliG
++ * @param[in] z            the acceloremeter value in Z axis, in milliG
+  */
+ void cayenne_lpp_add_accelerometer(cayenne_lpp_t *lpp, uint8_t channel,
+-                                   float x, float y, float z);
++                                   int16_t x, int16_t y, int16_t z);
+ 
+ /**
+  * @brief Add an encoded barometric pressure value to the buffer
+  *
+  * @param[in] lpp          the cayenne lpp descriptor
+  * @param[in] channel      the data channel
+- * @param[in] hpa          the barometric pressure value in HPa
++ * @param[in] hpa          the barometric pressure value in 0.1 HPa
+  */
+ void cayenne_lpp_add_barometric_pressure(cayenne_lpp_t *lpp, uint8_t channel,
+-                                         float hpa);
++                                         int16_t hpa);
+ 
+ /**
+  * @brief Add an encoded gyrometer value to the buffer
+  *
+  * @param[in] lpp          the cayenne lpp descriptor
+  * @param[in] channel      the data channel
+- * @param[in] x            the gyrometer value in X axis
+- * @param[in] y            the gyrometer value in Y axis
+- * @param[in] z            the gyrometer value in Z axis
++ * @param[in] x            the gyrometer value in X axis (with 3 decimal points)
++ * @param[in] y            the gyrometer value in Y axis (with 3 decimal points)
++ * @param[in] z            the gyrometer value in Z axis (with 3 decimal points)
+  */
+ void cayenne_lpp_add_gyrometer(cayenne_lpp_t *lpp, uint8_t channel,
+-                               float x, float y, float z);
++                               int16_t x, int16_t y, int16_t z);
+ 
+@@ -204,11 +204,11 @@ void cayenne_lpp_add_gyrometer(cayenne_lpp_t *lpp, uint8_t channel,
+  *
+  * @param[in] lpp          the cayenne lpp descriptor
+  * @param[in] channel      the data channel
+- * @param[in] latitude     the latitude
+- * @param[in] longitude    the longitude
+- * @param[in] meters       the altitude in meters
++ * @param[in] lat          the latitude in 1/10000 of a degree (approx. 10 m precision)
++ * @param[in] lon          the longitude in 1/10000 of a degree (several m precision, depending on latitude)
++ * @param[in] alt          the altitude in centimeters
+  */
+-void cayenne_lpp_add_gps(cayenne_lpp_t *lpp, uint8_t channel, float latitude, float longitude, float meters);
++void cayenne_lpp_add_gps(cayenne_lpp_t *lpp, uint8_t channel, int32_t lat, int32_t lon, int32_t alt);
+ 
+ #ifdef __cplusplus
+ }
+-- 
+2.28.0.windows.1
+

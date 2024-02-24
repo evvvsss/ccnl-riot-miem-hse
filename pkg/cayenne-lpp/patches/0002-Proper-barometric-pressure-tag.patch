@@ -1,0 +1,25 @@
+From 6ead6b1c93f5dbe4f3cc5f2174345eb4f821aa57 Mon Sep 17 00:00:00 2001
+From: Alexander Podshivalov <a_podshivalov@mail.ru>
+Date: Tue, 27 Oct 2020 20:27:14 +0300
+Subject: [PATCH 2/2] Proper barometric pressure tag
+
+---
+ cayenne_lpp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cayenne_lpp.c b/cayenne_lpp.c
+index d8a2628..b6b6611 100644
+--- a/cayenne_lpp.c
++++ b/cayenne_lpp.c
+@@ -129,7 +129,7 @@ void cayenne_lpp_add_barometric_pressure(cayenne_lpp_t *lpp, uint8_t channel,
+     assert((lpp->cursor + CAYENNE_LPP_BAROMETRIC_PRESSURE_SIZE) < CAYENNE_LPP_MAX_BUFFER_SIZE);
+ 
+     lpp->buffer[lpp->cursor++] = channel;
+-    lpp->buffer[lpp->cursor++] = CAYENNE_LPP_TEMPERATURE;
++    lpp->buffer[lpp->cursor++] = CAYENNE_LPP_BAROMETRIC_PRESSURE;
+     lpp->buffer[lpp->cursor++] = hpa >> 8;
+     lpp->buffer[lpp->cursor++] = hpa;
+ }
+-- 
+2.28.0.windows.1
+

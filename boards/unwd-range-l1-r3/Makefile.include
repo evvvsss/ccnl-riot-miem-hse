@@ -1,0 +1,2 @@
+# load the common Makefile.include for Unwired Devices boards
+include $(RIOTBOARD)/common/unwd/Makefile.include

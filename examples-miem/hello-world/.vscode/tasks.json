@@ -1,0 +1,59 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "debug-server",
+            "type": "shell",
+            "isBackground": true,
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "command": "make debug-server",
+        },
+        {
+            "label": "kill-openocd",
+            "type": "shell",
+            "isBackground": false,
+            "command": "pkill -9 openocd"
+        },
+        {
+            "label": "build",
+            "type": "shell",
+            "isBackground": false,
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "command": "make"
+        },
+        {
+            "label": "flash",
+            "type": "shell",
+            "isBackground": false,
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "command": "make flash"
+        },
+        {
+            "label": "flash-only",
+            "type": "shell",
+            "isBackground": false,
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "command": "make flash-only"
+        },
+        {
+            "label": "compile-commands",
+            "type": "shell",
+            "isBackground": true,
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "command": "make compile-commands"
+        }
+    ]
+}
