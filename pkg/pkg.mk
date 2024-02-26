@@ -53,7 +53,7 @@ GIT_CACHE_DIR ?= $(HOME)/.gitcache
 include $(RIOTBASE)/makefiles/utils/variables.mk
 $(call target-export-variables,$(PKG_BUILDDIR)/.git,GIT_CACHE_DIR)
 
-# allow overriding package source with local folder (useful during development)
+# allow overriding package source with local folder (useful during development) !
 ifneq (,$(PKG_SOURCE_LOCAL))
   include $(RIOTBASE)/pkg/local.mk
 else
@@ -127,26 +127,26 @@ $(PKG_DOWNLOADED): $(MAKEFILE_LIST) | $(PKG_SOURCE_DIR)/.git
 		$(GIT_IN_PKG) fetch $(GIT_QUIET) "$(PKG_URL)" "$(PKG_VERSION)"; \
 	fi
 	$(Q)echo $(PKG_VERSION) > $@
-
-ifeq ($(GIT_CACHE_DIR),$(wildcard $(GIT_CACHE_DIR)))
-$(PKG_SOURCE_DIR)/.git: | $(PKG_CUSTOM_PREPARED)
-	$(if $(QUIETER),,$(info [INFO] cloning $(PKG_NAME)))
-	$(Q)rm -Rf $(PKG_SOURCE_DIR)
-	$(Q)mkdir -p $(PKG_SOURCE_DIR)
-	$(Q)$(GITCACHE) clone $(PKG_URL) $(PKG_VERSION) $(PKG_SOURCE_DIR)
+#
+#ifeq ($(GIT_CACHE_DIR),$(wildcard $(GIT_CACHE_DIR)))
+#$(PKG_SOURCE_DIR)/.git: | $(PKG_CUSTOM_PREPARED)
+#	$(if $(QUIETER),,$(info [INFO] cloning $(PKG_NAME)))
+#	$(Q)rm -Rf $(PKG_SOURCE_DIR)
+#	$(Q)mkdir -p $(PKG_SOURCE_DIR)
+#	$(Q)$(GITCACHE) clone $(PKG_URL) $(PKG_VERSION) $(PKG_SOURCE_DIR)
 # else
 # # redirect stderr so git sees a pipe and not a terminal see https://github.com/git/git/blob/master/progress.c#L138
 # $(PKG_SOURCE_DIR)/.git: | $(PKG_CUSTOM_PREPARED)
-# 	$(if $(QUIETER),,$(info [INFO] cloning without cache $(PKG_NAME)))
-# 	$(Q)rm -Rf $(PKG_SOURCE_DIR)
-# 	$(Q)mkdir -p $(PKG_SOURCE_DIR)
-# 	$(Q)git init $(GIT_QUIET) $(PKG_SOURCE_DIR)
-# 	$(Q)$(GIT_IN_PKG) remote add origin $(PKG_URL)
-# 	$(Q)$(GIT_IN_PKG) config extensions.partialClone origin
-# 	$(Q)$(GIT_IN_PKG) config advice.detachedHead false
-# 	$(Q)$(GIT_IN_PKG) fetch $(GIT_QUIET) --depth=1 -t --filter=blob:none origin $(PKG_VERSION)
-# 	$(Q)$(GIT_IN_PKG) checkout $(GIT_QUIET) $(PKG_VERSION) 2>&1 | cat
-endif
+#	$(if $(QUIETER),,$(info [INFO] cloning without cache $(PKG_NAME)))
+#	$(Q)rm -Rf $(PKG_SOURCE_DIR)
+#	$(Q)mkdir -p $(PKG_SOURCE_DIR)
+#	$(Q)git init $(GIT_QUIET) $(PKG_SOURCE_DIR)
+#	$(Q)$(GIT_IN_PKG) remote add origin $(PKG_URL)
+#	$(Q)$(GIT_IN_PKG) config extensions.partialClone origin
+#	$(Q)$(GIT_IN_PKG) config advice.detachedHead false
+#	$(Q)$(GIT_IN_PKG) fetch $(GIT_QUIET) --depth=1 -t --filter=blob:none origin $(PKG_VERSION)
+#	$(Q)$(GIT_IN_PKG) checkout $(GIT_QUIET) $(PKG_VERSION) 2>&1 | cat
+#endif
 
 ifeq ($(PKG_SOURCE_DIR),$(PKG_BUILD_DIR))
 # This is the case for packages that are built within their source directory
