@@ -94,10 +94,13 @@ static int _ccnl_content(int argc, char **argv)
         _content_usage(argv[0]);
         return -1;
     }
-    printf("Путь");
+    printf("Путь ");
     printf("%s", argv[1]);
-    printf("Сообщение");
+    printf(" \n");
+    printf("Сообщение ");
     printf("%s", argv[2]);
+    printf(" \n");
+
 
     int arg_len;
     char buf[BUF_SIZE+1]; /* add one extra space to fit trailing '\0' */
@@ -418,3 +421,90 @@ static int _custom(int argc, char **argv)
 }
 
 SHELL_COMMAND(custom, "CUSTOM COMMAND FOR CS", _custom);
+
+
+static void _content_delete_usage(char *argv)
+{
+    printf("usage: %s [URI] [content]\n"
+           "prints the CS if called without parameters:\n"
+           "%% %s /riot/peter/schmerzl RIOT\n",
+           argv, argv);
+}
+
+static int _ccnl_content_delete(int argc, char **argv)
+{
+    // просто выводим данные cs
+    if (argc < 2) {
+        ccnl_cs_dump(&ccnl_relay);
+        return 0;
+    }
+    // description
+    if (argc == 2) {
+        _content_delete_usage(argv[0]);
+        return -1;
+    }
+    printf("Удаление контента по префиксу запущено\n");
+    printf("Префикс ");
+    printf("%s", argv[1]);
+    printf(" \n");
+    printf("Сообщение ");
+    printf("%s", argv[2]);
+    printf(" \n");
+
+
+    int arg_len;
+    char buf[BUF_SIZE+1]; /* add one extra space to fit trailing '\0' */
+
+    unsigned pos = 0;
+    for (int i = 2; (i < argc) && (pos < BUF_SIZE); ++i) {
+        arg_len = strlen(argv[i]);
+        if ((pos + arg_len) > BUF_SIZE) {
+            arg_len = BUF_SIZE - pos;
+        }
+        strncpy(&buf[pos], argv[i], arg_len);
+        pos += arg_len;
+        /* increment pos _after_ adding ' ' */
+        buf[pos++] = ' ';
+    }
+    /* decrement pos _before_ to overwrite last ' ' with '\0' */
+    buf[--pos] = '\0';
+
+    arg_len = strlen(buf);
+
+    char *prefix;
+    prefix = argv[1];
+    ccnl_cs_remove(&ccnl_relay, prefix);
+
+//    struct ccnl_prefix_s *prefix = ccnl_URItoPrefix(argv[1], CCNL_SUITE_NDNTLV, NULL);
+//    size_t offs = CCNL_MAX_PACKET_SIZE;
+//    size_t reslen = 0;
+//    arg_len = ccnl_ndntlv_prependContent(prefix, (unsigned char*) buf, arg_len, NULL, NULL, &offs, _out, &reslen);
+//
+//    ccnl_prefix_free(prefix);
+//
+//    unsigned char *olddata;
+//    unsigned char *data = olddata = _out + offs;
+//
+//    size_t len;
+//    uint64_t typ;
+//
+//    if (ccnl_ndntlv_dehead(&data, &reslen, &typ, &len) ||
+//        typ != NDN_TLV_Data) {
+//        return -1;
+//    }
+
+//    struct ccnl_content_s *c = 0;
+//    struct ccnl_pkt_s *pk = ccnl_ndntlv_bytes2pkt(typ, olddata, &data, &reslen);
+//    ccnl_content_free(&pk);
+//    c->flags |= CCNL_CONTENT_FLAGS_STATIC;
+//    msg_t m = { .type = CCNL_MSG_CS_DEL, .content.ptr = prefix };
+
+//    if(msg_send(&m, ccnl_event_loop_pid) < 1){
+//        puts("could not remove content");
+//    }
+    printf("Success deleted \n");
+    return 0;
+}
+
+SHELL_COMMAND(ccnl_cs_delete, "shows CS or DELETE content",
+_ccnl_content_delete);
