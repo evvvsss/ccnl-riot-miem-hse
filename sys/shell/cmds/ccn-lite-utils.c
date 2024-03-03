@@ -19,7 +19,7 @@
  */
 
 #include <string.h>
-
+#include "ccnl-os-time.h"
 #include "ccn-lite-riot.h"
 #include "ccnl-pkt-ndntlv.h"
 #include "net/gnrc/netif.h"
@@ -443,15 +443,28 @@ static int _ccnl_content_delete(int argc, char **argv)
         _content_delete_usage(argv[0]);
         return -1;
     }
-    printf("Удаление контента по префиксу запущено\n");
-    printf("Префикс ");
+    puts("Удаление контента по префиксу запущено\n");
+    puts("Префикс ");
     printf("%s", argv[1]);
-    printf(" \n");
-    printf("Сообщение ");
+    puts(" \n");
+    puts("Сообщение ");
     printf("%s", argv[2]);
-    printf(" \n");
+    puts(" \n");
 
-
+    // PIT table
+//    struct ccnl_forward_s *fib = ccnl_relay->fib;
+//    printf("\n number of cached item");
+//    printf("%i",ccnl_relay.contentcnt);
+//    struct ccnl_interest_s *pit = ccnl_relay.pit;
+//    printf("PIT TABLE INFO");
+//    puts("pit lifetime ");
+//    printf("%lu",pit->lifetime);
+//    puts("\ndata of first pkt in PIT ");
+//    printf("%d", pit->pkt->buf->data[1]);
+//    puts("\nprefix of first pkt in PIT ");
+//    ccnl_prefix_to_str(P, buf, buflen);
+    // char *prefix_for_print = ccnl_prefix_to_str(pit->pkt->pfx, (char *)pit->pkt->buf->data,CCNL_MAX_PREFIX_SIZE);
+    // printf("suite %s", prefix_for_print->suite);
     int arg_len;
     char buf[BUF_SIZE+1]; /* add one extra space to fit trailing '\0' */
 
@@ -508,3 +521,67 @@ static int _ccnl_content_delete(int argc, char **argv)
 
 SHELL_COMMAND(ccnl_cs_delete, "shows CS or DELETE content",
 _ccnl_content_delete);
+
+
+static void _content_info_usage(char *argv)
+{
+    printf("usage: %s [URI] [content]\n"
+           "prints the CS if called without parameters:\n"
+           "%% %s /riot/peter/schmerzl RIOT\n",
+           argv, argv);
+}
+
+static int _ccnl_info(int argc, char **argv)
+{
+//    snprintf(ts, sizeof(ts), "%.4g", CCNL_NOW());
+    printf("CCNL_NOW() time now %.4g", current_time());
+//    printf("CCNL_NOW() time now %.4g", CCNL_NOW());
+    // просто выводим данные cs
+    if (argc < 2) {
+        ccnl_cs_dump(&ccnl_relay);
+        return 0;
+    }
+    // description
+    if (argc == 2) {
+        _content_info_usage(argv[0]);
+        return -1;
+    }
+    // PIT table
+//    struct ccnl_forward_s *fib = ccnl_relay->fib;
+    printf("\n number of cached item: ");
+    printf("%i \n",ccnl_relay.contentcnt);
+    struct ccnl_interest_s *pit = ccnl_relay.pit;
+    printf("\nPIT TABLE INFO ");
+    puts("pit lifetime: ");
+    printf("%lu \n",pit->lifetime);
+    puts("\ndata of first pkt in PIT ");
+    if (pit->pkt->buf->data[1]) {
+    printf("%d", pit->pkt->buf->data[1]);}
+    puts("\nprefix of first pkt in PIT ");
+//    ccnl_prefix_to_str(P, buf, buflen);
+    // char *prefix_for_print = ccnl_prefix_to_str(pit->pkt->pfx,pit->pkt->buf->data,CCNL_MAX_PREFIX_SIZE);
+
+    // printf("suite %d", pit->pkt->pfx->suite);
+    int arg_len;
+    char buf[BUF_SIZE+1]; /* add one extra space to fit trailing '\0' */
+
+    unsigned pos = 0;
+    for (int i = 2; (i < argc) && (pos < BUF_SIZE); ++i) {
+        arg_len = strlen(argv[i]);
+        if ((pos + arg_len) > BUF_SIZE) {
+            arg_len = BUF_SIZE - pos;
+        }
+        strncpy(&buf[pos], argv[i], arg_len);
+        pos += arg_len;
+        /* increment pos _after_ adding ' ' */
+        buf[pos++] = ' ';
+    }
+    /* decrement pos _before_ to overwrite last ' ' with '\0' */
+    buf[--pos] = '\0';
+
+
+    return 0;
+}
+
+SHELL_COMMAND(ccnl_info, "shows CS or info",
+_ccnl_info);

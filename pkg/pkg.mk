@@ -48,10 +48,10 @@ PKG_SOURCE_LOCAL ?= $(PKG_SOURCE_LOCAL_$(shell echo $(PKG_NAME) | tr a-z- A-Z_))
 
 # git-cache specific management: GIT_CACHE_DIR is exported only
 # when cloning the repository.
-GITCACHE ?= $(RIOTTOOLS)/git/git-cache
-GIT_CACHE_DIR ?= $(HOME)/.gitcache
-include $(RIOTBASE)/makefiles/utils/variables.mk
-$(call target-export-variables,$(PKG_BUILDDIR)/.git,GIT_CACHE_DIR)
+#GITCACHE ?= $(RIOTTOOLS)/git/git-cache
+#GIT_CACHE_DIR ?= $(HOME)/.gitcache
+#include $(RIOTBASE)/makefiles/utils/variables.mk
+#$(call target-export-variables,$(PKG_BUILDDIR)/.git,GIT_CACHE_DIR)
 
 # allow overriding package source with local folder (useful during development) !
 ifneq (,$(PKG_SOURCE_LOCAL))
@@ -110,23 +110,23 @@ gen_dependency_files = $(file >$1,$@: $2)$(foreach f,$2,$(file >>$1,$(f):))
 # * clean, without removing the 'state' files
 # * checkout the wanted base commit
 # * apply patches if there are any. (If none, it does nothing)
-$(PKG_PATCHED): $(PKG_PATCHED_PREREQUISITES)
-	$(if $(QUIETER),,$(info [INFO] patch $(PKG_NAME)))
-	$(call gen_dependency_files,$@.d,$(PKG_PATCHED_PREREQUISITES))
-	$(Q)$(GIT_IN_PKG) clean $(GIT_QUIET) -xdff '**' -e $(PKG_STATE:$(PKG_SOURCE_DIR)/%='%*')
-	$(Q)$(GIT_IN_PKG) checkout $(GIT_QUIET) -f $(PKG_VERSION)
-	$(Q) if test -n "$(PKG_PATCHES)" ; then \
-	       $(GIT_IN_PKG) $(GITFLAGS) am $(GITAMFLAGS) $(PKG_PATCHES) ; \
-	     fi
-	$(Q)touch $@
+#$(PKG_PATCHED): $(PKG_PATCHED_PREREQUISITES)
+#	$(if $(QUIETER),,$(info [INFO] patch $(PKG_NAME)))
+#	$(call gen_dependency_files,$@.d,$(PKG_PATCHED_PREREQUISITES))
+#	$(Q)$(GIT_IN_PKG) clean $(GIT_QUIET) -xdff '**' -e $(PKG_STATE:$(PKG_SOURCE_DIR)/%='%*')
+#	$(Q)$(GIT_IN_PKG) checkout $(GIT_QUIET) -f $(PKG_VERSION)
+#	$(Q) if test -n "$(PKG_PATCHES)" ; then \
+#	       $(GIT_IN_PKG) $(GITFLAGS) am $(GITAMFLAGS) $(PKG_PATCHES) ; \
+#	     fi
+#	$(Q)touch $@
 
-$(PKG_DOWNLOADED): $(MAKEFILE_LIST) | $(PKG_SOURCE_DIR)/.git
-	$(if $(QUIETER),,$(info [INFO] updating $(PKG_NAME) $(PKG_DOWNLOADED)))
-	$(Q)if ! $(GIT_IN_PKG) cat-file -e $(PKG_VERSION); then \
-		$(if $(QUIETER),,printf "[INFO] fetching new $(PKG_NAME) version "$(PKG_VERSION)"\n";) \
-		$(GIT_IN_PKG) fetch $(GIT_QUIET) "$(PKG_URL)" "$(PKG_VERSION)"; \
-	fi
-	$(Q)echo $(PKG_VERSION) > $@
+#$(PKG_DOWNLOADED): $(MAKEFILE_LIST) | $(PKG_SOURCE_DIR)/.git
+#	$(if $(QUIETER),,$(info [INFO] updating $(PKG_NAME) $(PKG_DOWNLOADED)))
+#	$(Q)if ! $(GIT_IN_PKG) cat-file -e $(PKG_VERSION); then \
+#		$(if $(QUIETER),,printf "[INFO] fetching new $(PKG_NAME) version "$(PKG_VERSION)"\n";) \
+#		$(GIT_IN_PKG) fetch $(GIT_QUIET) "$(PKG_URL)" "$(PKG_VERSION)"; \
+#	fi
+#	$(Q)echo $(PKG_VERSION) > $@
 #
 #ifeq ($(GIT_CACHE_DIR),$(wildcard $(GIT_CACHE_DIR)))
 #$(PKG_SOURCE_DIR)/.git: | $(PKG_CUSTOM_PREPARED)

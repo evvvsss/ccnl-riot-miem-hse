@@ -101,7 +101,6 @@ ccnl_ndntlv_dehead(uint8_t **buf, size_t *len,
     if (*vallen > maxlen) {
         return -1; // Return failure (-1) if length value in the tlv is longer than the buffer
     }
-    printf("success1234")
     return 0;
 }
 
