@@ -1,0 +1,47 @@
+1710697615.690375;nrf52dk-1;ccnl_cs
+1710697615.690823;nrf52dk-2;ccnl_cs
+1710697615.691676;nrf52dk-2;CS[0]: /t [-1]: t
+1710697615.692195;nrf52dk-1;CS[0]: /r [-1]: t
+1710697625.161603;nrf52dk-1;> ccnl_cs .r t
+1710697625.161948;nrf52dk-2;> ccnl_cs .r t
+1710697627.690118;nrf52dk-1;> 
+1710697627.690487;nrf52dk-2;> 
+1710697627.692934;nrf52dk-1;shell: command not found: 
+1710697627.693257;nrf52dk-2;shell: command not found: 
+1710697631.345025;nrf52dk-1;> ccnl_fib
+1710697631.345378;nrf52dk-2;> ccnl_fib
+1710697631.349972;nrf52dk-2;Prefix                         | Suite      | Interface | Peer
+1710697631.351218;nrf52dk-1;Prefix                         | Suite      | Interface | Peer
+1710697631.357885;nrf52dk-2;-------------------------------|------------|-----------|------------------------------------
+1710697631.358590;nrf52dk-1;-------------------------------|------------|-----------|------------------------------------
+1710697685.837418;nrf52dk-2;>  ccnl_fib
+1710697685.842144;nrf52dk-2;Prefix                         | Suite      | Interface | Peer
+1710697685.850347;nrf52dk-2;-------------------------------|------------|-----------|------------------------------------
+1710697713.265536;nrf52dk-1;> nrf52dk;
+1710697713.267051;nrf52dk-2;> nrf52dk;
+1710697713.268380;nrf52dk-1;shell: command not found: nrf52dk;
+1710697713.268699;nrf52dk-2;shell: command not found: nrf52dk;
+1710697718.624629;nrf52dk-1;> ccnl_cs /r r
+1710697718.625024;nrf52dk-2;> ccnl_cs /r r
+1710697776.591883;nrf52dk-1;> ssh root@node-nrf52dk-2
+1710697776.592683;nrf52dk-2;> ssh root@node-nrf52dk-2
+1710697776.595160;nrf52dk-1;shell: command not found: ssh
+1710697776.595455;nrf52dk-2;shell: command not found: ssh
+1710697843.911362;nrf52dk-1;> 1710697553.879127;nrf52dk-2;
+1710697843.912926;nrf52dk-2;> 1710697553.879127;nrf52dk-2;
+1710697843.916705;nrf52dk-1;shell: command not found: 1710697553.879127;nrf52dk-2;
+1710697843.916948;nrf52dk-2;shell: command not found: 1710697553.879127;nrf52dk-2;
+1710697850.256864;nrf52dk-2;> 1710697553.879127;nrf52dk-2; ccnl_cs
+1710697850.257554;nrf52dk-1;> 1710697553.879127;nrf52dk-2; ccnl_cs
+1710697850.261667;nrf52dk-1;shell: command not found: 1710697553.879127;nrf52dk-2;
+1710697850.261957;nrf52dk-2;shell: command not found: 1710697553.879127;nrf52dk-2;
+1710697856.935957;nrf52dk-1;> 1710697553.879127;nrf52dk-2; ccnl_cs;
+1710697856.937040;nrf52dk-2;> 1710697553.879127;nrf52dk-2; ccnl_cs;
+1710697856.940850;nrf52dk-1;shell: command not found: 1710697553.879127;nrf52dk-2;
+1710697856.941129;nrf52dk-2;shell: command not found: 1710697553.879127;nrf52dk-2;
+1710877321.777495;nrf52dk-1;ccnl_int /r
+1710877321.778155;nrf52dk-10;ccnl_int /r
+1710877321.779432;nrf52dk-1;PKTDUMP: data received:
+1710877321.784485;nrf52dk-1;~~ SNIP  0 - size:   1 byte, type: GNRC_NETTYPE_CCN_CHUNK (2)
+1710877321.786015;nrf52dk-1;Content is: h
+1710877321.790306;nrf52dk-1;~~ PKT    -  1 snips, total size:   1 byte
