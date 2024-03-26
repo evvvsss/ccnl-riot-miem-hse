@@ -45,3 +45,56 @@
 1710877321.784485;nrf52dk-1;~~ SNIP  0 - size:   1 byte, type: GNRC_NETTYPE_CCN_CHUNK (2)
 1710877321.786015;nrf52dk-1;Content is: h
 1710877321.790306;nrf52dk-1;~~ PKT    -  1 snips, total size:   1 byte
+1711492557.936419;nrf52dk-3;ccnl_run_send_int 5
+1711492557.937984;nrf52dk-3;packages number is 5
+1711492557.940320;nrf52dk-3;/riot random_path_data
+1711492557.943242;nrf52dk-3;/riot random_path_data
+1711492557.945298;nrf52dk-3;/riot random_path_data
+1711492557.948220;nrf52dk-3;/riot random_path_data
+1711492558.022018;nrf52dk-4;ccnl_content_add2cache (1/5) --> 0x20009f18 = /miem [-1]
+1711492558.054151;nrf52dk-3;> ccnl_content_add2cache (0/5) --> 0x20009da0 = /miem [-1]
+1711492558.057190;nrf52dk-3;PKTDUMP: data received:
+1711492558.062240;nrf52dk-3;~~ SNIP  0 - size:   6 byte, type: GNRC_NETTYPE_CCN_CHUNK (2)
+1711492558.064238;nrf52dk-3;Content is: lslsls
+1711492558.067254;nrf52dk-3;~~ PKT    -  1 snips, total size:   6 byte
+1711492592.552895;nrf52dk-4;run_send_int 7
+1711492592.555749;nrf52dk-4;shell: command not found: run_send_int
+1711492634.558739;nrf52dk-4;> ccnl_cs /ccnllite helloworld
+1711492634.559645;nrf52dk-4;Путь /ccnllite 
+1711492634.562689;nrf52dk-4;��ообщение helloworld 
+1711492634.568638;nrf52dk-4;ccnl_content_add2cache (1/5) --> 0x200097d8 = /ccnllite [-1]
+1711492648.715330;nrf52dk-3;ccnl_run_send_int 5 
+1711492648.716318;nrf52dk-3;packages number is 5
+1711492648.718362;nrf52dk-3;/riot random_path_data
+1711492648.721299;nrf52dk-3;/riot random_path_data
+1711492648.723308;nrf52dk-3;/riot random_path_data
+1711492648.726466;nrf52dk-3;/riot random_path_data
+1711492648.736228;nrf52dk-3;> ccnl_content_add2cache (0/5) --> 0x20009da8 = /ccnllite [-1]
+1711492648.739288;nrf52dk-3;PKTDUMP: data received:
+1711492648.744230;nrf52dk-3;~~ SNIP  0 - size:  10 byte, type: GNRC_NETTYPE_CCN_CHUNK (2)
+1711492648.746371;nrf52dk-3;Content is: helloworld
+1711492648.750355;nrf52dk-3;~~ PKT    -  1 snips, total size:  10 byte
+1711492648.772923;nrf52dk-4;structures444> ccnl_content_add2cache (2/5) --> 0x20009ee0 = /miem [-1]
+1711492648.806378;nrf52dk-3;ccnl_content_add2cache (0/5) --> 0x20009868 = /miem [-1]
+1711492648.809352;nrf52dk-3;PKTDUMP: data received:
+1711492648.814285;nrf52dk-3;~~ SNIP  0 - size:   6 byte, type: GNRC_NETTYPE_CCN_CHUNK (2)
+1711492648.816374;nrf52dk-3;Content is: lslsls
+1711492648.819192;nrf52dk-3;~~ PKT    -  1 snips, total size:   6 byte
+1711492661.074148;nrf52dk-4;exit()
+1711492661.074504;nrf52dk-3;exit()
+1711492661.074679;nrf52dk-2;exit()
+1711492661.076912;nrf52dk-4;shell: command not found: exit()
+1711492661.077171;nrf52dk-3;shell: command not found: exit()
+1711492661.077579;nrf52dk-2;shell: command not found: exit()
+1711492662.888830;nrf52dk-2;> exit
+1711492662.889127;nrf52dk-4;> exit
+1711492662.889430;nrf52dk-3;> exit
+1711492662.891393;nrf52dk-3;shell: command not found: exit
+1711492662.891657;nrf52dk-2;shell: command not found: exit
+1711492662.891985;nrf52dk-4;shell: command not found: exit
+1711492736.873589;nrf52dk-2;> q
+1711492736.874108;nrf52dk-3;> q
+1711492736.874339;nrf52dk-4;> q
+1711492736.875812;nrf52dk-4;shell: command not found: q
+1711492736.875990;nrf52dk-3;shell: command not found: q
+1711492736.876139;nrf52dk-2;shell: command not found: q
