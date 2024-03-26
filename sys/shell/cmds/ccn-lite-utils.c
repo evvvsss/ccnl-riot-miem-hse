@@ -291,20 +291,6 @@ static int _ccnl_fib(int argc, char **argv)
 SHELL_COMMAND(ccnl_fib, "shows or modifies the CCN-Lite FIB", _ccnl_fib);
 
 
-// static void _ccnl_fib_copy_usage(char *argv)
-// {
-//     printf("usage: %s [<action> <options>]\n"
-//            "CUSTOM COMMAND IS WORKING:\n"
-//            "%% %s\n"
-//            "<action> may be one of the following\n"
-//            "  * \"add\" - adds an entry to the FIB, requires a prefix and a next-hop address, e.g.\n"
-//            "            %s add /riot/peter/schmerzl ab:cd:ef:01:23:45:67:89\n"
-//            "  * \"del\" - deletes an entry to the FIB, requires a prefix or a next-hop address, e.g.\n"
-//            "            %s del /riot/peter/schmerzl\n"
-//            "            %s del ab:cd:ef:01:23:45:67:89\n",
-//             argv, argv, argv, argv, argv);
-// }
-
 static int _fib_copy(int argc, char **argv)
 {
     if (argc < 2) {
@@ -347,13 +333,6 @@ static int _fib_copy(int argc, char **argv)
 
 SHELL_COMMAND(fib_copy, "CUSTOM COMMAND FIB", _fib_copy);
 
-
-
-// static void _ccnl_custom_usage(char *argv)
-// {
-//     printf("clear custom cmd for creating data in CS",
-//             argv, argv, argv, argv, argv);
-// }
 
 static int _custom(int argc, char **argv)
 {
@@ -533,7 +512,6 @@ static void _content_info_usage(char *argv)
 
 static int _ccnl_info(int argc, char **argv)
 {
-//    snprintf(ts, sizeof(ts), "%.4g", CCNL_NOW());
     printf("CCNL_NOW() time now %.4g", current_time());
 //    printf("CCNL_NOW() time now %.4g", CCNL_NOW());
     // просто выводим данные cs
@@ -555,8 +533,8 @@ static int _ccnl_info(int argc, char **argv)
     puts("pit lifetime: ");
     printf("%lu \n",pit->lifetime);
     puts("\ndata of first pkt in PIT ");
-    if (pit->pkt->buf->data[1]) {
-    printf("%d", pit->pkt->buf->data[1]);}
+    if (pit->pkt->buf->data[0]) {
+    printf("%d", pit->pkt->buf->data[0]);}
     puts("\nprefix of first pkt in PIT ");
 //    ccnl_prefix_to_str(P, buf, buflen);
     // char *prefix_for_print = ccnl_prefix_to_str(pit->pkt->pfx,pit->pkt->buf->data,CCNL_MAX_PREFIX_SIZE);
@@ -585,3 +563,45 @@ static int _ccnl_info(int argc, char **argv)
 
 SHELL_COMMAND(ccnl_info, "shows CS or info",
 _ccnl_info);
+
+
+
+//static void ccnl_run_send_int_usage()
+//{
+//
+//    printf("usage: ccnl_run X. Где X - необязательное число пакетов. Запуск обмена пакетами. \n");
+//}
+
+static int ccnl_run_send_int(int argc, char **argv)
+{
+    int num_of_packages = 20;
+
+    if (argc == 2) {
+        num_of_packages = atoi(argv[1]);
+    }
+
+    char *random_path_data[4] [1]= {
+            {"/riot"},
+            {"/miem"},
+            {"/hse"},
+            {"/ccnllite"}
+    };
+
+    //for CS
+//    char *random_path_data[4][2] = {
+//            {"/riot", "data1"},
+//            {"/miem", "data2"},
+//            {"/hse", "data3"},
+//            {"/ccnllite", "data4"}
+//    };
+    printf("packages number is %i\n", num_of_packages);
+    for(int i=1; i < num_of_packages+1; i++)
+    {
+        printf("%s random_path_data\n", random_path_data[0][0]);
+        _ccnl_interest(2, random_path_data[i % 4]);
+    };
+    return 0;
+}
+
+SHELL_COMMAND(ccnl_run_send_int, "Run sending Interests",
+ccnl_run_send_int);
