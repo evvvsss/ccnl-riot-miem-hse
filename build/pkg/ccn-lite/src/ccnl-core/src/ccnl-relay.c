@@ -1017,8 +1017,6 @@ ccnl_cs_add(struct ccnl_relay_s *ccnl, struct ccnl_content_s *c)
     struct ccnl_content_s *content;
 
     content = ccnl_content_add2cache(ccnl, c);
-    // printf("ccnl_cs_add %c %c", ccnl, c->pkt);
-    printf("structures444");
     if (content) {
         ccnl_content_serve_pending(ccnl, content);
         return 0;

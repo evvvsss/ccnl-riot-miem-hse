@@ -26,6 +26,14 @@
 #include "random.h"
 #include "sched.h"
 #include "shell.h"
+#include "xtimer.h"
+
+//#include "xtimer/tick_conversion.h"
+//
+//#include "xtimer/implementation.h"
+//#include <time.h>
+//#include "timex.h"
+//#include "ztimer64.h"
 
 #define BUF_SIZE (64)
 
@@ -94,12 +102,6 @@ static int _ccnl_content(int argc, char **argv)
         _content_usage(argv[0]);
         return -1;
     }
-    printf("Путь ");
-    printf("%s", argv[1]);
-    printf(" \n");
-    printf("Сообщение ");
-    printf("%s", argv[2]);
-    printf(" \n");
 
 
     int arg_len;
@@ -580,11 +582,11 @@ static int ccnl_run_send_int(int argc, char **argv)
         num_of_packages = atoi(argv[1]);
     }
 
-    char *random_path_data[4] [1]= {
+    char *random_path_headers[4][1]= {
             {"/riot"},
             {"/miem"},
             {"/hse"},
-            {"/ccnllite"}
+            {"/ccnlite"}
     };
 
     //for CS
@@ -594,14 +596,52 @@ static int ccnl_run_send_int(int argc, char **argv)
 //            {"/hse", "data3"},
 //            {"/ccnllite", "data4"}
 //    };
-    printf("packages number is %i\n", num_of_packages);
+    printf("\nPackages amount is %i\n", num_of_packages);
+    printf("Run sending Interest packages\n");
     for(int i=1; i < num_of_packages+1; i++)
     {
-        printf("%s random_path_data\n", random_path_data[0][0]);
-        _ccnl_interest(2, random_path_data[i % 4]);
+        xtimer_usleep(1000000); // 1 sec sleep
+        printf("Random_path_header: %s \n", random_path_headers[i % 4][0]);
+        _ccnl_interest(2, random_path_headers[i % 4]);
     };
+    printf("\nFinish sending Interest packages\n");
     return 0;
 }
 
 SHELL_COMMAND(ccnl_run_send_int, "Run sending Interests",
 ccnl_run_send_int);
+
+
+static int ccnl_run_fill_cs(int argc, char **argv)
+{
+    int num_of_packages = 4;
+
+    if (argc == 2) {
+        num_of_packages = atoi(argv[1]);
+    }
+
+    //for filling CS
+    char *random_path_data[4][2] = {
+            {"data1", "/riot"},
+            {"data2", "/miem"},
+            {"data3", "/hse"},
+            {"data4", "/ccnlite"}
+    };
+
+    printf("\nPackages amount is %i\n", num_of_packages);
+    printf("\nRun filling CS\n");
+    for(int i=1; i < num_of_packages+1; i++)
+    {
+        printf("Random_path_data: %s %s \n", random_path_data[i % 4][0], random_path_data[i % 4][1]);
+        _ccnl_content(3, random_path_data[i % 4]);
+    };
+
+    //show final CS
+    printf("\nFinish filling CS\n");
+
+    _ccnl_content(1, random_path_data[1]);
+    return 0;
+}
+
+SHELL_COMMAND(ccnl_run_fill_cs, "Run filling Content Storage",
+ccnl_run_fill_cs);
