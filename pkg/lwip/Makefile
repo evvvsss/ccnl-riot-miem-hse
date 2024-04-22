@@ -27,8 +27,8 @@ all: lwip
 lwip: $(LWIP_USEMODULE)
 	$(call make_module,$@,$(PKG_SOURCE_DIR))
 
-lwip_api:
-	$(call make_module,$@,$(PKG_SOURCE_DIR)/src/api)
+#lwip_api:
+#	$(call make_module,$@,$(PKG_SOURCE_DIR)/src/api)
 
 lwip_core:
 	$(call make_module,$@,$(PKG_SOURCE_DIR)/src/core)

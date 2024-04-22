@@ -28,6 +28,8 @@
 #include "net/gcoap.h"
 #include "net/utils.h"
 #include "od.h"
+#include "xtimer.h"
+
 
 #include "gcoap_example.h"
 
@@ -60,10 +62,12 @@ static ssize_t _encode_link(const coap_resource_t *resource, char *buf,
                             size_t maxlen, coap_link_encoder_ctx_t *context);
 static ssize_t _stats_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, coap_request_ctx_t *ctx);
 static ssize_t _riot_board_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, coap_request_ctx_t *ctx);
+static ssize_t _test_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, coap_request_ctx_t *ctx);
 
 /* CoAP resources. Must be sorted by path (ASCII order). */
 static const coap_resource_t _resources[] = {
     { "/cli/stats", COAP_GET | COAP_PUT, _stats_handler, NULL },
+    {"/test", COAP_GET | COAP_POST, _test_handler, NULL},
     { "/riot/board", COAP_GET, _riot_board_handler, NULL },
 };
 
@@ -132,6 +136,55 @@ static ssize_t _stats_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, coap_re
                 char payload[6] = { 0 };
                 memcpy(payload, (char *)pdu->payload, pdu->payload_len);
                 req_count = (uint16_t)strtoul(payload, NULL, 10);
+                return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
+            }
+            else {
+                return gcoap_response(pdu, buf, len, COAP_CODE_BAD_REQUEST);
+            }
+    }
+
+    return 0;
+}
+
+
+static ssize_t _test_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, coap_request_ctx_t *ctx)
+{
+    (void)ctx;
+    /* read coap method type in packet */
+    unsigned method_flag = coap_method2flag(coap_get_code_detail(pdu));
+
+
+    switch (method_flag) {
+        printf("Server. Current time: %ld\n", xtimer_now());
+        case COAP_GET:
+            gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+            coap_opt_add_format(pdu, COAP_FORMAT_TEXT);
+            size_t resp_len = coap_opt_finish(pdu, COAP_OPT_FINISH_PAYLOAD);
+            /* write the response buffer with the request count value */
+            resp_len += fmt_u16_dec((char *)pdu->payload, req_count);
+            printf("{\"found data\": \"");
+//            char get_payload[10] = { 0 };
+//            memcpy(get_payload, (char *)pdu->payload, pdu->payload_len);
+//            printf("%s", get_payload);
+            printf("%s", (char *)pdu->payload);
+            printf("\"}\n");
+            return resp_len;
+//            return coap_block2_build_reply(pdu, COAP_CODE_205, buf, len, payload_len,
+//                                           &slicer); // nanocoap.c
+//            return gcoap_response(pdu, buf, len, COAP_CODE_205); // *** RIOT kernel panic
+
+        case COAP_POST:
+            /* convert the payload to an integer and update the internal
+               value */
+            if (pdu->payload_len <= 9) {
+                char payload[10] = { 0 };
+                memcpy(payload, (char *)pdu->payload, pdu->payload_len);
+                req_count = (uint16_t)strtoul(payload, NULL, 10);
+                printf("{\"recieved data\": \"");
+                for (int i=0; i<pdu->payload_len; i++){
+                    printf("%c", payload[i]);
+                }
+                printf("\"}\n");
                 return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
             }
             else {

@@ -503,45 +503,29 @@ static int _ccnl_content_delete(int argc, char **argv)
 SHELL_COMMAND(ccnl_cs_delete, "shows CS or DELETE content",
 _ccnl_content_delete);
 
-
-static void _content_info_usage(char *argv)
-{
-    printf("usage: %s [URI] [content]\n"
-           "prints the CS if called without parameters:\n"
-           "%% %s /riot/peter/schmerzl RIOT\n",
-           argv, argv);
-}
-
 static int _ccnl_info(int argc, char **argv)
 {
-    printf("CCNL_NOW() time now %.4g", current_time());
-//    printf("CCNL_NOW() time now %.4g", CCNL_NOW());
-    // просто выводим данные cs
-    if (argc < 2) {
-        ccnl_cs_dump(&ccnl_relay);
-        return 0;
-    }
-    // description
-    if (argc == 2) {
-        _content_info_usage(argv[0]);
-        return -1;
-    }
-    // PIT table
-//    struct ccnl_forward_s *fib = ccnl_relay->fib;
-    printf("\n number of cached item: ");
+
+    printf("\nAmount of cached items: ");
     printf("%i \n",ccnl_relay.contentcnt);
+
     struct ccnl_interest_s *pit = ccnl_relay.pit;
     printf("\nPIT TABLE INFO ");
     puts("pit lifetime: ");
     printf("%lu \n",pit->lifetime);
-    puts("\ndata of first pkt in PIT ");
-    if (pit->pkt->buf->data[0]) {
-    printf("%d", pit->pkt->buf->data[0]);}
-    puts("\nprefix of first pkt in PIT ");
-//    ccnl_prefix_to_str(P, buf, buflen);
-    // char *prefix_for_print = ccnl_prefix_to_str(pit->pkt->pfx,pit->pkt->buf->data,CCNL_MAX_PREFIX_SIZE);
+    puts("pit current number of executed retransmits: ");
+    printf("%i \n",pit->retries);
 
-    // printf("suite %d", pit->pkt->pfx->suite);
+
+    puts("\ndata of first pkt in PIT ");
+
+    if (pit && (pit->pkt) && (pit->pkt->pfx)) {
+        printf("type of pkt");
+        printf("%c" ,pit->pkt->pfx->suite);
+//    printf("%d", pit->pkt->buf->data[0]);
+    }
+    puts("\nprefix of first pkt in PIT ");
+
     int arg_len;
     char buf[BUF_SIZE+1]; /* add one extra space to fit trailing '\0' */
 

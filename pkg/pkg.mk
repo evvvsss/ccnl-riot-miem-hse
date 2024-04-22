@@ -83,13 +83,13 @@ PKG_CUSTOM_PREPARED ?=
 all: prepare
 
 # Add noop builtin to avoid "Nothing to be done for prepare" message
-prepare: $(PKG_PREPARED)
-	@:
+#prepare: $(PKG_PREPARED)
+#	@:
 
 # Allow packages to add a custom step to be `prepared`.
 # It should be a dependency of `$(PKG_PREPARED)` and depend on `$(PKG_PATCHED)`
-$(PKG_PREPARED): $(PKG_PATCHED)
-	@touch $@
+#$(PKG_PREPARED): $(PKG_PATCHED)
+#	@touch $@
 
 # Use explicit '--git-dir' and '--work-tree' to prevent issues when the
 # directory is not a git repository for any reason (clean -xdff or others)

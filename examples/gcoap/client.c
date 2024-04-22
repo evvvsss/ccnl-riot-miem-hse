@@ -32,6 +32,8 @@
 #include "net/sock/util.h"
 #include "net/utils.h"
 #include "od.h"
+#include "xtimer.h"
+
 
 #include "gcoap_example.h"
 
@@ -281,12 +283,13 @@ int gcoap_cli_cmd(int argc, char **argv)
         msg_type = COAP_TYPE_CON;
         apos++;
     }
-
+    xtimer_sleep(1);
     if (((argc == apos + 1) && (code_pos == 0)) ||    /* ping */
         ((argc == apos + 2) && (code_pos == 1)) ||    /* get */
         ((argc == apos + 2 ||
           argc == apos + 3) && (code_pos > 1))) {     /* post or put */
 
+        // переместить в цикл ниже
         char *uri = NULL;
         int uri_len = 0;
         if (code_pos) {
@@ -294,83 +297,83 @@ int gcoap_cli_cmd(int argc, char **argv)
             uri_len = strlen(argv[apos+1]);
         }
 
-        if (_proxied) {
-            sock_udp_ep_t tmp_remote;
-            if (sock_udp_name2ep(&tmp_remote, argv[apos]) != 0) {
-                return _print_usage(argv);
-            }
+        for (int i=0; i < 50; i++) {
 
-            if (tmp_remote.port == 0) {
-                if (IS_USED(MODULE_GCOAP_DTLS)) {
-                    tmp_remote.port = CONFIG_GCOAPS_PORT;
+            xtimer_msleep(150); // 0.15 sec
+            printf("Client. Cycle response %i\n", i);
+            printf("Client. Current time: %ld\n", xtimer_now());
+            if (_proxied) {
+                sock_udp_ep_t tmp_remote;
+                if (sock_udp_name2ep(&tmp_remote, argv[apos]) != 0) {
+                    return _print_usage(argv);
                 }
-                else {
-                    tmp_remote.port = CONFIG_GCOAP_PORT;
+
+                if (tmp_remote.port == 0) {
+                    if (IS_USED(MODULE_GCOAP_DTLS)) {
+                        tmp_remote.port = CONFIG_GCOAPS_PORT;
+                    } else {
+                        tmp_remote.port = CONFIG_GCOAP_PORT;
+                    }
                 }
-            }
 
 #ifdef SOCK_HAS_IPV6
-            char addrstr[IPV6_ADDR_MAX_STR_LEN];
+                char addrstr[IPV6_ADDR_MAX_STR_LEN];
 #else
-            char addrstr[IPV4_ADDR_MAX_STR_LEN];
+                char addrstr[IPV4_ADDR_MAX_STR_LEN];
 #endif
-            inet_ntop(tmp_remote.family, &tmp_remote.addr, addrstr, sizeof(addrstr));
+                inet_ntop(tmp_remote.family, &tmp_remote.addr, addrstr, sizeof(addrstr));
 
-            if (tmp_remote.family == AF_INET6) {
-                uri_len = snprintf(proxy_uri, sizeof(proxy_uri), "coap://[%s]:%d%s",
-                                   addrstr, tmp_remote.port, uri);
+                if (tmp_remote.family == AF_INET6) {
+                    uri_len = snprintf(proxy_uri, sizeof(proxy_uri), "coap://[%s]:%d%s",
+                                       addrstr, tmp_remote.port, uri);
+                } else {
+                    uri_len = snprintf(proxy_uri, sizeof(proxy_uri), "coap://%s:%d%s",
+                                       addrstr, tmp_remote.port, uri);
+                }
+
+                uri = proxy_uri;
+
+                gcoap_req_init(&pdu, &buf[0], CONFIG_GCOAP_PDU_BUF_SIZE, code_pos, NULL);
+            } else {
+                gcoap_req_init(&pdu, &buf[0], CONFIG_GCOAP_PDU_BUF_SIZE, code_pos, uri);
             }
-            else {
-                uri_len = snprintf(proxy_uri, sizeof(proxy_uri), "coap://%s:%d%s",
-                                   addrstr, tmp_remote.port, uri);
+            coap_hdr_set_type(pdu.hdr, msg_type);
+
+            memset(_last_req_path, 0, _LAST_REQ_PATH_MAX);
+            if (uri_len < _LAST_REQ_PATH_MAX) {
+                memcpy(_last_req_path, uri, uri_len);
             }
 
-            uri = proxy_uri;
-
-            gcoap_req_init(&pdu, &buf[0], CONFIG_GCOAP_PDU_BUF_SIZE, code_pos, NULL);
-        }
-        else{
-            gcoap_req_init(&pdu, &buf[0], CONFIG_GCOAP_PDU_BUF_SIZE, code_pos, uri);
-        }
-        coap_hdr_set_type(pdu.hdr, msg_type);
-
-        memset(_last_req_path, 0, _LAST_REQ_PATH_MAX);
-        if (uri_len < _LAST_REQ_PATH_MAX) {
-            memcpy(_last_req_path, uri, uri_len);
-        }
-
-        size_t paylen = (argc == apos + 3) ? strlen(argv[apos+2]) : 0;
-        if (paylen) {
-            coap_opt_add_format(&pdu, COAP_FORMAT_TEXT);
-        }
-
-        if (_proxied) {
-            coap_opt_add_proxy_uri(&pdu, uri);
-        }
-
-        if (paylen) {
-            len = coap_opt_finish(&pdu, COAP_OPT_FINISH_PAYLOAD);
-            if (pdu.payload_len >= paylen) {
-                memcpy(pdu.payload, argv[apos+2], paylen);
-                len += paylen;
+            size_t paylen = (argc == apos + 3) ? strlen(argv[apos + 2]) : 0;
+            if (paylen) {
+                coap_opt_add_format(&pdu, COAP_FORMAT_TEXT);
             }
-            else {
-                puts("gcoap_cli: msg buffer too small");
-                return 1;
-            }
-        }
-        else {
-            len = coap_opt_finish(&pdu, COAP_OPT_FINISH_NONE);
-        }
 
-        printf("gcoap_cli: sending msg ID %u, %u bytes\n", coap_get_id(&pdu),
-               (unsigned) len);
-        if (!_send(&buf[0], len, argv[apos])) {
-            puts("gcoap_cli: msg send failed");
-        }
-        else {
-            /* send Observe notification for /cli/stats */
-            notify_observers();
+            if (_proxied) {
+                coap_opt_add_proxy_uri(&pdu, uri);
+            }
+
+            if (paylen) {
+                len = coap_opt_finish(&pdu, COAP_OPT_FINISH_PAYLOAD);
+                if (pdu.payload_len >= paylen) {
+                    memcpy(pdu.payload, argv[apos + 2], paylen);
+                    len += paylen;
+                } else {
+                    puts("gcoap_cli: msg buffer too small");
+                    return 1;
+                }
+            } else {
+                len = coap_opt_finish(&pdu, COAP_OPT_FINISH_NONE);
+            }
+
+            printf("gcoap_cli: sending msg ID %u, %u bytes\n", coap_get_id(&pdu),
+                   (unsigned) len);
+            if (!_send(&buf[0], len, argv[apos])) {
+                puts("gcoap_cli: msg send failed");
+            } else {
+                /* send Observe notification for /cli/stats */
+                notify_observers();
+            }
         }
         return 0;
     }

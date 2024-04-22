@@ -854,7 +854,8 @@ ccnl_fib_add_entry(struct ccnl_relay_s *relay, struct ccnl_prefix_s *pfx,
 
     DEBUGMSG_CUTL(INFO, "adding FIB for <%s>, suite %s\n",
              ccnl_prefix_to_str(pfx,s,CCNL_MAX_PREFIX_SIZE), ccnl_suite2str(pfx->suite));
-
+    printf("adding FIB for <%s>, suite %s\n",
+             ccnl_prefix_to_str(pfx,s,CCNL_MAX_PREFIX_SIZE), ccnl_suite2str(pfx->suite));
     for (fwd = relay->fib; fwd; fwd = fwd->next) {
         if (fwd->suite == pfx->suite &&
                         !ccnl_prefix_cmp(fwd->prefix, NULL, pfx, CMP_EXACT)) {

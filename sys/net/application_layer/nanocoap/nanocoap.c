@@ -1014,7 +1014,6 @@ ssize_t coap_opt_finish(coap_pkt_t *pkt, uint16_t flags)
     else {
         pkt->payload_len = 0;
     }
-
     return pkt->payload - (uint8_t *)pkt->hdr;
 }
 
