@@ -1383,6 +1383,7 @@ kernel_pid_t gcoap_init(void)
                             THREAD_CREATE_STACKTEST, _event_loop, NULL, "coap");
 
     mutex_init(&_coap_state.lock);
+
     /* Blank lists so we know if an entry is available. */
     memset(&_coap_state.open_reqs[0], 0, sizeof(_coap_state.open_reqs));
     memset(&_coap_state.observers[0], 0, sizeof(_coap_state.observers));
@@ -1473,6 +1474,7 @@ ssize_t gcoap_req_send_tl(const uint8_t *buf, size_t len,
                           gcoap_resp_handler_t resp_handler, void *context,
                           gcoap_socket_type_t tl_type)
 {
+//    printf("gcoap_req_send_tl");
     gcoap_socket_t socket = { 0 };
     gcoap_request_memo_t *memo = NULL;
     unsigned msg_type  = (*buf & 0x30) >> 4;
@@ -1490,6 +1492,8 @@ ssize_t gcoap_req_send_tl(const uint8_t *buf, size_t len,
      * response or request is confirmable) */
     if ((resp_handler != NULL) || (msg_type == COAP_TYPE_CON)) {
         mutex_lock(&_coap_state.lock);
+//        printf("mutex_lock");
+
         /* Find empty slot in list of open requests. */
         for (int i = 0; i < CONFIG_GCOAP_REQ_WAITING_MAX; i++) {
             if (_coap_state.open_reqs[i].state == GCOAP_MEMO_UNUSED) {
@@ -1500,6 +1504,8 @@ ssize_t gcoap_req_send_tl(const uint8_t *buf, size_t len,
         }
         if (!memo) {
             mutex_unlock(&_coap_state.lock);
+//            printf("mutex_unlock");
+            puts("gcoap: dropping request; no space for response tracking\n");
             DEBUG("gcoap: dropping request; no space for response tracking\n");
             return 0;
         }
@@ -1513,6 +1519,8 @@ ssize_t gcoap_req_send_tl(const uint8_t *buf, size_t len,
             ssize_t res = _cache_check(buf, len, memo, &cache_hit);
 
             if (res < 0) {
+                puts("is using MODULE_NANOCOAP_CACHEg\n");
+
                 return res;
             }
             len = res;
@@ -1552,10 +1560,12 @@ ssize_t gcoap_req_send_tl(const uint8_t *buf, size_t len,
             break;
         default:
             memo->state = GCOAP_MEMO_UNUSED;
+            printf("gcoap: illegal msg type %u\n", msg_type);
             DEBUG("gcoap: illegal msg type %u\n", msg_type);
             break;
         }
         mutex_unlock(&_coap_state.lock);
+//        printf("mutex_unlock");
         if (memo->state == GCOAP_MEMO_UNUSED) {
             return 0;
         }

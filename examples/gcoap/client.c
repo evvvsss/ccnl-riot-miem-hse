@@ -290,18 +290,22 @@ int gcoap_cli_cmd(int argc, char **argv)
           argc == apos + 3) && (code_pos > 1))) {     /* post or put */
 
         // переместить в цикл ниже
-        char *uri = NULL;
-        int uri_len = 0;
-        if (code_pos) {
-            uri = argv[apos+1];
-            uri_len = strlen(argv[apos+1]);
-        }
+//        char *uri = NULL;
+//        int uri_len = 0;
+//        if (code_pos) {
+//            uri = argv[apos+1];
+//            uri_len = strlen(argv[apos+1]);
+//        }
 
-        for (int i=0; i < 50; i++) {
-
-            xtimer_msleep(150); // 0.15 sec
-            printf("Client. Cycle response %i\n", i);
-            printf("Client. Current time: %ld\n", xtimer_now());
+        for (int i=0; i < 1000; i++) {
+            char *uri = NULL;
+            int uri_len = 0;
+            if (code_pos) {
+                uri = argv[apos+1];
+                uri_len = strlen(argv[apos+1]);
+            }
+            xtimer_msleep(400); // 0.4 sec
+            printf("{\"Client. Iteration\": \"%i\", \"Current time\": \"%ld\"}\n", i, xtimer_now());
             if (_proxied) {
                 sock_udp_ep_t tmp_remote;
                 if (sock_udp_name2ep(&tmp_remote, argv[apos]) != 0) {

@@ -155,32 +155,33 @@ static ssize_t _test_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, coap_req
 
 
     switch (method_flag) {
-        printf("Server. Current time: %ld\n", xtimer_now());
         case COAP_GET:
+            printf("{\"Server. Current time\": \"%ld\"}\n", xtimer_now());
             gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
             coap_opt_add_format(pdu, COAP_FORMAT_TEXT);
             size_t resp_len = coap_opt_finish(pdu, COAP_OPT_FINISH_PAYLOAD);
             /* write the response buffer with the request count value */
             resp_len += fmt_u16_dec((char *)pdu->payload, req_count);
-            printf("{\"found data\": \"");
+//            printf("{\"found data\": \"");
 //            char get_payload[10] = { 0 };
 //            memcpy(get_payload, (char *)pdu->payload, pdu->payload_len);
 //            printf("%s", get_payload);
-            printf("%s", (char *)pdu->payload);
-            printf("\"}\n");
+//            printf("%s", (char *)pdu->payload);
+//            printf("\"}\n");
             return resp_len;
 //            return coap_block2_build_reply(pdu, COAP_CODE_205, buf, len, payload_len,
 //                                           &slicer); // nanocoap.c
 //            return gcoap_response(pdu, buf, len, COAP_CODE_205); // *** RIOT kernel panic
 
         case COAP_POST:
+            printf("{\"Server. Current time\": \"%ld\",", xtimer_now());
             /* convert the payload to an integer and update the internal
                value */
             if (pdu->payload_len <= 9) {
                 char payload[10] = { 0 };
                 memcpy(payload, (char *)pdu->payload, pdu->payload_len);
                 req_count = (uint16_t)strtoul(payload, NULL, 10);
-                printf("{\"recieved data\": \"");
+                printf("\"recieved data\": \"");
                 for (int i=0; i<pdu->payload_len; i++){
                     printf("%c", payload[i]);
                 }
