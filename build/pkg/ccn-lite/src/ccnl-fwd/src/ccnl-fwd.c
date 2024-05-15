@@ -31,6 +31,7 @@
 #include "ccnl-pkt-ccntlv.h"
 #include "ccnl-pkt-ndntlv.h"
 #include "ccnl-pkt-switch.h"
+#include "stdio.h"
 #else
 #include <linux/types.h>
 #include "../include/ccnl-fwd.h"
@@ -69,10 +70,14 @@ ccnl_fwd_handleContent(struct ccnl_relay_s *relay, struct ccnl_face_s *from,
              DEBUGMSG_CFWD(INFO, "  incoming data=<%s>%s from=%s\n",
                 ccnl_prefix_to_str((*pkt)->pfx,s,CCNL_MAX_PREFIX_SIZE), ccnl_suite2str((*pkt)->suite),
                   from_as_str ? from_as_str : "");
+             printf("{\"Client. Incoming data\": \"%s\"}\n",
+                    ccnl_prefix_to_str((*pkt)->pfx,s,CCNL_MAX_PREFIX_SIZE));
         }
     } else {
         DEBUGMSG_CFWD(INFO, "  incoming data=<%s>%s from=%s\n",
             ccnl_prefix_to_str((*pkt)->pfx,s,CCNL_MAX_PREFIX_SIZE), ccnl_suite2str((*pkt)->suite), "");
+        printf("{\"Client. Incoming data\": \"%s\"}\n",
+               ccnl_prefix_to_str((*pkt)->pfx,s,CCNL_MAX_PREFIX_SIZE));
 
     }
 
@@ -256,6 +261,7 @@ ccnl_fwd_handleInterest(struct ccnl_relay_s *relay, struct ccnl_face_s *from,
             continue;
 
         DEBUGMSG_CFWD(DEBUG, "  found matching content %p\n", (void *) c);
+        printf("{\"Server. Found matching content\": \"%s\"}\n", ccnl_prefix_to_str((*pkt)->pfx,s,CCNL_MAX_PREFIX_SIZE));
 
         if (from) {
             if (from->ifndx >= 0) {

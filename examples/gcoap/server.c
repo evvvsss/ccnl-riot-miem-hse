@@ -186,6 +186,8 @@ static ssize_t _test_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, coap_req
                     printf("%c", payload[i]);
                 }
                 printf("\"}\n");
+                printf("gcoap_cli: received msg ID %u, %u bytes\n", coap_get_id(pdu),
+                       (unsigned) pdu->payload_len);
                 return gcoap_response(pdu, buf, len, COAP_CODE_CHANGED);
             }
             else {

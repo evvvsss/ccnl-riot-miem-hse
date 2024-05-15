@@ -510,14 +510,11 @@ static int _ccnl_info(int argc, char **argv)
     printf("%i \n",ccnl_relay.contentcnt);
 
     struct ccnl_interest_s *pit = ccnl_relay.pit;
-    printf("\nPIT TABLE INFO ");
-    puts("pit lifetime: ");
-    printf("%lu \n",pit->lifetime);
-    puts("pit current number of executed retransmits: ");
-    printf("%i \n",pit->retries);
+    printf("PIT lifetime: %lu \n", pit->lifetime);
+    printf("pit current number of executed retransmits: %i \n", pit->retries);
 
 
-    puts("\ndata of first pkt in PIT ");
+    printf("\ndata of first pkt in PIT ");
 
     if (pit && (pit->pkt) && (pit->pkt->pfx)) {
         printf("type of pkt");
@@ -551,43 +548,33 @@ SHELL_COMMAND(ccnl_info, "shows CS or info",
 _ccnl_info);
 
 
-
-//static void ccnl_run_send_int_usage()
-//{
-//
-//    printf("usage: ccnl_run X. Где X - необязательное число пакетов. Запуск обмена пакетами. \n");
-//}
-
 static int ccnl_run_send_int(int argc, char **argv)
 {
-    int num_of_packages = 20;
+    int num_of_packages = 1000;
 
+    // второй необязательный входной параметр - количество итераций. По умолч. 1000
     if (argc == 2) {
         num_of_packages = atoi(argv[1]);
     }
 
-    char *random_path_headers[4][1]= {
-            {"/riot"},
-            {"/miem"},
-            {"/hse"},
-            {"/ccnlite"}
+    char *random_path_headers[6][2]= {
+            {"ccnl_int", "/test1"},
+            {"ccnl_int", "/test2"},
+            {"ccnl_int", "/test3"},
+            {"ccnl_int", "/test4"},
+            {"ccnl_int", "/test5"},
+            {"ccnl_int", "/test6"},
     };
 
-    //for CS
-//    char *random_path_data[4][2] = {
-//            {"/riot", "data1"},
-//            {"/miem", "data2"},
-//            {"/hse", "data3"},
-//            {"/ccnllite", "data4"}
-//    };
     printf("\nPackages amount is %i\n", num_of_packages);
     printf("Run sending Interest packages\n");
     for(int i=1; i < num_of_packages+1; i++)
     {
-        xtimer_usleep(1000000); // 1 sec sleep
-        printf("Random_path_header: %s \n", random_path_headers[i % 4][0]);
-        _ccnl_interest(2, random_path_headers[i % 4]);
+        xtimer_usleep(400000); // 0.4 sec sleep
+        printf("{\"Client. Iteration %i. Sended Interest with header\": \"%s\"}\n", i, random_path_headers[i % 6][1]);
+        _ccnl_interest(2, random_path_headers[i % 6]);
     };
+    xtimer_usleep(2000000);
     printf("\nFinish sending Interest packages\n");
     return 0;
 }
@@ -598,26 +585,29 @@ ccnl_run_send_int);
 
 static int ccnl_run_fill_cs(int argc, char **argv)
 {
-    int num_of_packages = 4;
+    int num_of_packages = 6;
 
     if (argc == 2) {
         num_of_packages = atoi(argv[1]);
     }
 
     //for filling CS
-    char *random_path_data[4][2] = {
-            {"data1", "/riot"},
-            {"data2", "/miem"},
-            {"data3", "/hse"},
-            {"data4", "/ccnlite"}
+    char *random_path_data[6][3] = {
+            {"ccnl_cs", "/test1", "data1"},
+            {"ccnl_cs","/test2", "data2"},
+            {"ccnl_cs","/test3", "data3"},
+            {"ccnl_cs","/test4", "data4"},
+            {"ccnl_cs","/test5", "data5"},
+            {"ccnl_cs","/test6", "data6"},
     };
 
     printf("\nPackages amount is %i\n", num_of_packages);
     printf("\nRun filling CS\n");
     for(int i=1; i < num_of_packages+1; i++)
     {
-        printf("Random_path_data: %s %s \n", random_path_data[i % 4][0], random_path_data[i % 4][1]);
-        _ccnl_content(3, random_path_data[i % 4]);
+        xtimer_usleep(1000000); // 1 sec sleep
+        printf("{\"Random path data\": \"%s %s\"}\n", random_path_data[i % 6][1], random_path_data[i % 6][2]);
+        _ccnl_content(3, random_path_data[i % 6]);
     };
 
     //show final CS

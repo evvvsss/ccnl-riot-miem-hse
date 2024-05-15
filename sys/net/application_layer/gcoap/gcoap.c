@@ -1486,13 +1486,13 @@ ssize_t gcoap_req_send_tl(const uint8_t *buf, size_t len,
 
     res = _tl_init_coap_socket(&socket, tl_type);
     if (res < 0) {
+        puts("coap: msg send failed");
         return -EINVAL;
     }
     /* Only allocate memory if necessary (i.e. if user is interested in the
      * response or request is confirmable) */
     if ((resp_handler != NULL) || (msg_type == COAP_TYPE_CON)) {
         mutex_lock(&_coap_state.lock);
-//        printf("mutex_lock");
 
         /* Find empty slot in list of open requests. */
         for (int i = 0; i < CONFIG_GCOAP_REQ_WAITING_MAX; i++) {
@@ -1504,7 +1504,6 @@ ssize_t gcoap_req_send_tl(const uint8_t *buf, size_t len,
         }
         if (!memo) {
             mutex_unlock(&_coap_state.lock);
-//            printf("mutex_unlock");
             puts("gcoap: dropping request; no space for response tracking\n");
             DEBUG("gcoap: dropping request; no space for response tracking\n");
             return 0;
@@ -1545,10 +1544,12 @@ ssize_t gcoap_req_send_tl(const uint8_t *buf, size_t len,
 #if CONFIG_COAP_RANDOM_FACTOR_1000 > 1000
                 timeout = random_uint32_range(timeout, TIMEOUT_RANGE_END);
 #endif
+                puts("gcoap: retransmit\n");
                 memo->state = GCOAP_MEMO_RETRANSMIT;
             }
             else {
                 memo->state = GCOAP_MEMO_UNUSED;
+                puts("gcoap: no space for PDU in resend bufs\n");
                 DEBUG("gcoap: no space for PDU in resend bufs\n");
             }
             break;
@@ -1565,7 +1566,6 @@ ssize_t gcoap_req_send_tl(const uint8_t *buf, size_t len,
             break;
         }
         mutex_unlock(&_coap_state.lock);
-//        printf("mutex_unlock");
         if (memo->state == GCOAP_MEMO_UNUSED) {
             return 0;
         }
@@ -1622,6 +1622,7 @@ ssize_t gcoap_req_send_tl(const uint8_t *buf, size_t len,
             memo->state = GCOAP_MEMO_UNUSED;
         }
         DEBUG("gcoap: sock send failed: %d\n", (int)res);
+        printf("gcoap: sock send failed: %d\n", (int)res);
     }
     return ((res > 0 || res == -ENOTCONN) ? res : 0);
 }

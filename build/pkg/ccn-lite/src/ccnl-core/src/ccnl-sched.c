@@ -275,6 +275,7 @@ ccnl_sched_RX_loss(struct ccnl_relay_s *ccnl, int ifndx, int cnt)
     (void)ifndx;
     (void)cnt;
     DEBUGMSG(TRACE, "ccnl_sched_RX_loss()\n");
+    printf("ccnl_sched_RX_loss()\n");
     // here a chemflow reaction NW could act on pkt loss events
 }
 

@@ -99,8 +99,7 @@ static void _dump_snip(gnrc_pktsnip_t *pkt)
 #endif  /* IS_USED(MODULE_GNRC_NETTYPE_ICMPV6) */
 #if IS_USED(MODULE_GNRC_NETTYPE_CCN)
     case GNRC_NETTYPE_CCN_CHUNK:
-        printf("GNRC_NETTYPE_CCN_CHUNK (%i)\n", pkt->type);
-        printf("Content is: %.*s\n", (int)pkt->size, (char*)pkt->data);
+        printf("{\"Recieved data\": \"%.*s\"}\n", (int)pkt->size, (char*)pkt->data);
         hdr_len = pkt->size;
         break;
 #endif  /* IS_USED(MODULE_GNRC_NETTYPE_CCN) */
@@ -150,15 +149,15 @@ static void _dump(gnrc_pktsnip_t *pkt)
     gnrc_pktsnip_t *snip = pkt;
 
     while (snip != NULL) {
-        printf("~~ SNIP %2i - size: %3u byte, type: ", snips,
-               (unsigned int)snip->size);
+//        printf("~~ SNIP %2i - size: %3u byte, type: ", snips,
+//               (unsigned int)snip->size);
         _dump_snip(snip);
         ++snips;
         size += snip->size;
         snip = snip->next;
     }
 
-    printf("~~ PKT    - %2i snips, total size: %3i byte\n", snips, size);
+    printf("{\"Total size recieved data\": \"%i byte\"}\n", size);
     gnrc_pktbuf_release(pkt);
 }
 
@@ -179,7 +178,7 @@ static void *_eventloop(void *arg)
 
         switch (msg.type) {
             case GNRC_NETAPI_MSG_TYPE_RCV:
-                puts("PKTDUMP: data received:");
+//                puts("PKTDUMP: data received:");
                 _dump(msg.content.ptr);
                 break;
             case GNRC_NETAPI_MSG_TYPE_SND:

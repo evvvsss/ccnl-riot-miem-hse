@@ -26,6 +26,8 @@
 extern "C" {
 #endif
 
+#define STDIO_UART_BAUDRATE (115200U)
+
 /**
  * @name    LED pin configuration
  * @{

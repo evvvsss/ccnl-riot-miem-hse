@@ -459,7 +459,7 @@ extern "C" {
  * @brief   Size of the buffer used to build a CoAP request or response
  */
 #ifndef CONFIG_GCOAP_PDU_BUF_SIZE
-#define CONFIG_GCOAP_PDU_BUF_SIZE      (128)
+#define CONFIG_GCOAP_PDU_BUF_SIZE      (256)
 #endif
 
 /**
@@ -622,7 +622,7 @@ extern "C" {
  */
 #ifndef GCOAP_STACK_SIZE
 #if IS_USED(MODULE_GCOAP_DTLS)
-#define GCOAP_DTLS_EXTRA_STACKSIZE  (THREAD_STACKSIZE_DEFAULT)
+#define GCOAP_DTLS_EXTRA_STACKSIZE  (2048)
 #else
 #define GCOAP_DTLS_EXTRA_STACKSIZE  (0)
 #endif
@@ -639,7 +639,7 @@ extern "C" {
 
 #define GCOAP_STACK_SIZE (THREAD_STACKSIZE_DEFAULT + DEBUG_EXTRA_STACKSIZE \
                           + sizeof(coap_pkt_t) + GCOAP_DTLS_EXTRA_STACKSIZE \
-                          + GCOAP_VFS_EXTRA_STACKSIZE)
+                          + GCOAP_VFS_EXTRA_STACKSIZE) * 2
 #endif
 /** @} */
 

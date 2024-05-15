@@ -20,7 +20,7 @@
  */
 #ifndef CCNL_LINUXKERNEL
 #include "ccnl-dispatch.h"
-
+#include "stdio.h"
 #include "ccnl-os-time.h"
 
 #include "ccnl-localrpc.h"
@@ -76,6 +76,7 @@ ccnl_core_RX(struct ccnl_relay_s *relay, int ifndx, uint8_t *data,
     (void) base; // silence compiler warning (if USE_DEBUG is not set)
 
     DEBUGMSG_CORE(DEBUG, "ccnl_core_RX ifndx=%d, %zu bytes\n", ifndx, datalen);
+//    printf("ccnl_core_RX ifndx=%d, %zu bytes\n", ifndx, datalen);
     //    DEBUGMSG_ON(DEBUG, "ccnl_core_RX ifndx=%d, %d bytes\n", ifndx, datalen);
 
 #ifdef USE_STATS
@@ -118,6 +119,7 @@ ccnl_core_RX(struct ccnl_relay_s *relay, int ifndx, uint8_t *data,
         }
         if (datalen > 0) {
             DEBUGMSG_CORE(WARNING, "ccnl_core_RX: %zu bytes left\n", datalen);
+            printf("ccnl_core_RX: %zu bytes left\n", datalen);
         }
     }
 }

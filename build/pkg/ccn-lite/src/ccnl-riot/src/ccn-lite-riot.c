@@ -279,7 +279,7 @@ ccnl_app_RX(struct ccnl_relay_s *ccnl, struct ccnl_content_s *c)
 {
     (void) ccnl;
     DEBUGMSG(DEBUG, "Received something of size %u for the application\n", c->pkt->contlen);
-    printf("Received something of size %u for the application\n", c->pkt->contlen);
+//    printf("Received something of size %u for the application\n", c->pkt->contlen);
 
     gnrc_pktsnip_t *pkt= gnrc_pktbuf_add(NULL, c->pkt->content,
                                          c->pkt->contlen,
@@ -416,6 +416,7 @@ void
                 }
                 else {
                     DEBUGMSG(WARNING, "ccn-lite: CS lookup failed, because of no memory available\n");
+                    printf("ccn-lite: CS lookup failed, because of no memory available\n");
                     content = NULL;
                 }
                 mr.content.ptr = content;
@@ -438,6 +439,7 @@ void
                 break;
             default:
                 DEBUGMSG(WARNING, "ccn-lite: unknown message type\n");
+                printf("ccn-lite: unknown message type\n");
                 break;
         }
 

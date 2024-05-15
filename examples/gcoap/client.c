@@ -177,6 +177,10 @@ static size_t _send(uint8_t *buf, size_t len, char *addr_str)
     if (bytes_sent > 0) {
         req_count++;
     }
+    if(!bytes_sent){
+        puts("coap: msg send failed");
+    }
+
     return bytes_sent;
 }
 
@@ -304,7 +308,7 @@ int gcoap_cli_cmd(int argc, char **argv)
                 uri = argv[apos+1];
                 uri_len = strlen(argv[apos+1]);
             }
-            xtimer_msleep(400); // 0.4 sec
+            xtimer_msleep(800); // 0.8 sec
             printf("{\"Client. Iteration\": \"%i\", \"Current time\": \"%ld\"}\n", i, xtimer_now());
             if (_proxied) {
                 sock_udp_ep_t tmp_remote;

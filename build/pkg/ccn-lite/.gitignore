@@ -16,7 +16,6 @@ Module.symvers
 
 # ccn-binaries
 src/ccn-lite-minimalrelay
-src/ccn-lite-relay
 src/ccn-lite-simu
 src/arduino/.build/*
 src/arduino/lib/.holder

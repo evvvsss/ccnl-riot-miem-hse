@@ -312,6 +312,7 @@ usage:
                                           wait, sock, sa)) {
             retry++;
             DEBUGMSG(WARNING, "timeout\n");//, retry number %d of %d\n", retry, maxretry);
+            printf("timeout");
         } else {
 
             int64_t lastchunknum;
@@ -376,6 +377,7 @@ usage:
 
         if(retry > 0) {
             DEBUGMSG(INFO, "Retry %d of %d\n", retry, maxretry);
+            printf("Retry %d of %d\n", retry, maxretry);
         }
     }
 

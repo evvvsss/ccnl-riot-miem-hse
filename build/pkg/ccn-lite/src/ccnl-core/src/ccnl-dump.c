@@ -210,6 +210,9 @@ ccnl_dump(int lev, int typ, void *p)
                 CONSOLE("%p PENDINT next=%p face=%p last=%" PRIu32 "\n",
                         (void *) pir, (void *) pir->next,
                         (void *) pir->face, pir->last_used);
+                printf("%p PENDINT next=%p face=%p last=%" PRIu32 "\n",
+                        (void *) pir, (void *) pir->next,
+                        (void *) pir->face, pir->last_used);
                 pir = pir->next;
             }
             break;
